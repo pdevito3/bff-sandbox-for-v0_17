@@ -16,6 +16,24 @@ function RecipeList() {
 	const [sortOrder, setSortOrder] = React.useState<string>();
 	const [pageSize, setPageSize] = React.useState<number>(1);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
+
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	React.useEffect(() => {
+		sorting.length > 0
+			? setSortOrder(sorting.map((s) => (s.desc ? `-${s.id}` : s.id)).join(","))
+			: setSortOrder(undefined);
+	}, [sorting, setSortOrder]);
+
+	/* TODO 
+
+		Want to have the recipe hook and columns in the list page and feed just that to the table and the table cant take care of the rest
+
+		*Problem*: The recipe hook needs the sort order and page size to work properly, but the table should be owning that.
+		*Solution*: Take another look at KCD context to see if i can make a context wrapper with the data
+
+	*/
+
+	// THIS...
 	const { data: recipeResponse, isLoading } = useRecipes({ sortOrder, pageSize, pageNumber });
 	const recipeData = recipeResponse?.data;
 	const recipePagination = recipeResponse?.pagination;
@@ -38,8 +56,8 @@ function RecipeList() {
 			header: () => <span className="px-2 py-1">Directions</span>,
 		}),
 	];
+	// ... TO THIS would be on the list, the rest will be in the table component... maybe add some props for something like starting page size
 
-	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const table = useReactTable({
 		data: recipeData ?? ([] as RecipeDto[]),
 		columns,
@@ -52,20 +70,14 @@ function RecipeList() {
 			},
 		},
 		onSortingChange: setSorting,
+		manualPagination: true,
 
 		// pipeline
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-		manualPagination: true,
 		//
 	});
-
-	React.useEffect(() => {
-		sorting.length > 0
-			? setSortOrder(sorting.map((s) => (s.desc ? `-${s.id}` : s.id)).join(","))
-			: setSortOrder(undefined);
-	}, [sorting, setSortOrder]);
 
 	if (isLoading) return <div>Loading...</div>;
 	return (
