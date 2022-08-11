@@ -11,7 +11,7 @@ const getRecipes = (queryString: string) => {
 		? queryString 
 		: `?${queryString}`;
 
-	return api.get(`/api/recipes?${queryString}`)
+	return api.get(`/api/recipes${queryString}`)
 		.then((response: AxiosResponse<RecipeDto[]>) => {
 			return {
 				data: response.data as RecipeDto[],

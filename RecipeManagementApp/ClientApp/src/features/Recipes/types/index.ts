@@ -5,22 +5,24 @@ export interface QueryParams {
   sortOrder?: string;
 }
 
-export interface RecipeDto {
+export type RecipeDto = {
   id: string;
-  Title: string;
-  Directions: string;
-  RecipeSourceLink: string;
-  Description: string;
-  Rating?: number;
+  title: string;
+  directions: string;
+  visibility: string;
+  recipeSourceLink: string;
+  description: string;
+  rating?: number;
 }
 
 export interface RecipeForManipulationDto {
   id: string;
-  Title: string;
-  Directions: string;
-  RecipeSourceLink: string;
-  Description: string;
-  Rating?: number;
+  ritle: string;
+  directions: string;
+  visibility: string;
+  recipeSourceLink: string;
+  description: string;
+  rating?: number;
 }
 
 export interface RecipeForCreationDto extends RecipeForManipulationDto { }
