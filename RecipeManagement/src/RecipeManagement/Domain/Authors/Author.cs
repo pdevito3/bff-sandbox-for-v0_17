@@ -30,7 +30,6 @@ public class Author : BaseEntity
         new AuthorForCreationDtoValidator().ValidateAndThrow(authorForCreationDto);
 
         var newAuthor = new Author();
-
         newAuthor.Name = authorForCreationDto.Name;
         newAuthor.RecipeId = authorForCreationDto.RecipeId;
 

@@ -57,7 +57,7 @@ class RealmBuild : Stack
             "https://localhost:4378",
             redirectUris: new InputList<string>() 
                 {
-                "https://localhost:4378",
+                "https://localhost:4378/*",
                 },
             webOrigins: new InputList<string>() 
                 {
