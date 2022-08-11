@@ -67,12 +67,6 @@ function RecipeList() {
 			: setSortOrder(undefined);
 	}, [sorting, setSortOrder]);
 
-	React.useEffect(() => {
-		const tableState = table.getState().pagination;
-		setPageSize(tableState.pageSize);
-		setPageNumber(tableState.pageIndex + 1);
-	}, [table.getState().pagination]);
-
 	if (isLoading) return <div>Loading...</div>;
 	return (
 		<>
@@ -123,9 +117,11 @@ function RecipeList() {
 							<button
 								className={clsx(
 									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasPrevious ? "cursor-not-allowed opacity-50" : "",
+									!recipePagination?.hasPrevious
+										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+										: "",
 								)}
-								onClick={() => table.setPageIndex(0)}
+								onClick={() => setPageNumber(1)}
 								disabled={!recipePagination?.hasPrevious}
 							>
 								{"⏪"}
@@ -133,9 +129,13 @@ function RecipeList() {
 							<button
 								className={clsx(
 									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasPrevious ? "cursor-not-allowed opacity-50" : "",
+									!recipePagination?.hasPrevious
+										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+										: "",
 								)}
-								onClick={() => table.previousPage()}
+								onClick={() =>
+									setPageNumber(recipePagination?.pageNumber ? recipePagination?.pageNumber - 1 : 1)
+								}
 								disabled={!recipePagination?.hasPrevious}
 							>
 								{"◀️"}
@@ -143,9 +143,13 @@ function RecipeList() {
 							<button
 								className={clsx(
 									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasNext ? "cursor-not-allowed opacity-50" : "",
+									!recipePagination?.hasNext
+										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+										: "",
 								)}
-								onClick={() => table.nextPage()}
+								onClick={() =>
+									setPageNumber(recipePagination?.pageNumber ? recipePagination?.pageNumber + 1 : 1)
+								}
 								disabled={!recipePagination?.hasNext}
 							>
 								{"▶️"}
@@ -153,12 +157,12 @@ function RecipeList() {
 							<button
 								className={clsx(
 									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasNext ? "cursor-not-allowed opacity-50" : "",
+									!recipePagination?.hasNext
+										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+										: "",
 								)}
 								onClick={() =>
-									table.setPageIndex(
-										recipePagination?.totalPages ? recipePagination?.totalPages - 1 : 0,
-									)
+									setPageNumber(recipePagination?.totalPages ? recipePagination?.totalPages : 1)
 								}
 								disabled={!recipePagination?.hasNext}
 							>
@@ -167,7 +171,7 @@ function RecipeList() {
 							<span className="flex items-center gap-1">
 								<div>Page</div>
 								<strong>
-									{recipePagination?.pageNumber} of {recipePagination?.totalPages}
+									{pageNumber} of {recipePagination?.totalPages}
 								</strong>
 							</span>
 							<span className="flex items-center gap-1">
@@ -176,22 +180,22 @@ function RecipeList() {
 									type="number"
 									// defaultValue={recipePagination?.pageNumber ? recipePagination?.pageNumber : 1}
 									onChange={(e) => {
-										const page = e.target.value ? Number(e.target.value) - 1 : 0;
-										table.setPageIndex(page);
+										const page = e.target.value ? Number(e.target.value) : 1;
+										setPageNumber(page);
 									}}
-									value={table.getState().pagination.pageIndex + 1}
+									value={pageNumber}
 									className="w-16 p-1 border rounded"
 								/>
 							</span>
 							<select
-								value={recipePagination?.pageSize}
+								value={pageSize}
 								onChange={(e) => {
-									table.setPageSize(Number(e.target.value));
+									setPageSize(Number(e.target.value));
 								}}
 							>
-								{[1, 10, 20, 30, 40, 50].map((pageSize) => (
-									<option key={pageSize} value={pageSize}>
-										Show {pageSize}
+								{[1, 10, 20, 30, 40, 50].map((selectedPageSize) => (
+									<option key={selectedPageSize} value={selectedPageSize}>
+										Show {selectedPageSize}
 									</option>
 								))}
 							</select>
