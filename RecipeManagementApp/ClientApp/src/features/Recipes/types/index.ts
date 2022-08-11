@@ -1,8 +1,10 @@
+import { WraptSortingState } from "@/types/api";
+
 export interface QueryParams {
   pageNumber?: number;
   pageSize?: number;
   filters?: string;
-  sortOrder?: string;
+  sortOrder?: WraptSortingState;
 }
 
 export type RecipeDto = {

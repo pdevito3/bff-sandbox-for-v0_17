@@ -13,16 +13,9 @@ import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
 
 function RecipeList() {
-	const [sortOrder, setSortOrder] = React.useState<string>();
 	const [pageSize, setPageSize] = React.useState<number>(1);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
-
 	const [sorting, setSorting] = React.useState<SortingState>([]);
-	React.useEffect(() => {
-		sorting.length > 0
-			? setSortOrder(sorting.map((s) => (s.desc ? `-${s.id}` : s.id)).join(","))
-			: setSortOrder(undefined);
-	}, [sorting, setSortOrder]);
 
 	/* TODO 
 
@@ -34,7 +27,11 @@ function RecipeList() {
 	*/
 
 	// THIS...
-	const { data: recipeResponse, isLoading } = useRecipes({ sortOrder, pageSize, pageNumber });
+	const { data: recipeResponse, isLoading } = useRecipes({
+		sortOrder: sorting,
+		pageSize,
+		pageNumber,
+	});
 	const recipeData = recipeResponse?.data;
 	const recipePagination = recipeResponse?.pagination;
 

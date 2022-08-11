@@ -14,3 +14,10 @@ export interface Pagination {
   totalCount: number;
   totalPages: number;
 }
+
+export type WraptSortDirection = 'asc' | 'desc';
+export type WraptColumnSort = {
+    id: string;
+    desc: boolean;
+};
+export type WraptSortingState = WraptColumnSort[];
