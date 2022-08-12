@@ -25,10 +25,15 @@ const PaginatedTableContext = React.createContext<PaginatedTableContextResponse>
 	{} as PaginatedTableContextResponse,
 );
 
-// TODO improve typing. initialPageSize should be a number limited to the options in the dropdown
-function PaginatedTableProvider(props: any) {
-	const initialPageSize = props?.initialPageSize ?? 10;
-	const [sorting, setSorting] = React.useState<SortingState>();
+const PageSizeOptions = [1, 10, 20, 30, 40, 50] as const;
+export type PageSizeNumber = typeof PageSizeOptions[number];
+interface PaginatedTableProviderProps {
+	initialPageSize?: PageSizeNumber;
+	children: React.ReactNode;
+}
+
+function PaginatedTableProvider({ initialPageSize = 10, children }: PaginatedTableProviderProps) {
+	const [sorting, setSorting] = React.useState<SortingState>({} as SortingState);
 	const [pageSize, setPageSize] = React.useState<number>(initialPageSize);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
 	const value = {
@@ -41,7 +46,7 @@ function PaginatedTableProvider(props: any) {
 		initialPageSize,
 	};
 
-	return <PaginatedTableContext.Provider value={value} {...props} />;
+	return <PaginatedTableContext.Provider value={value} />;
 }
 
 function usePaginatedTableContext() {
@@ -218,7 +223,7 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 												setPageSize(Number(e.target.value));
 											}}
 										>
-											{[1, 10, 20, 30, 40, 50].map((selectedPageSize) => (
+											{PageSizeOptions.map((selectedPageSize) => (
 												<option key={selectedPageSize} value={selectedPageSize}>
 													Show {selectedPageSize}
 												</option>
