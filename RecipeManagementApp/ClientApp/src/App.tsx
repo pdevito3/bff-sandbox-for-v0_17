@@ -1,12 +1,12 @@
-import React from 'react';
-import { IngredientList } from './features/Ingredients';
-import { RecipeList } from './features/Recipes';
-import { Login, useAuthUser } from './features/Auth';
-import './custom.css';
-import 'react-toastify/dist/ReactToastify.min.css';
-import { PrivateLayout, PublicLayout } from './components/Layouts';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Home } from './features/Home';
+import React from "react";
+import { IngredientList } from "./features/Ingredients";
+import { RecipeList } from "./features/Recipes";
+import { Login, useAuthUser } from "./features/Auth";
+import "./custom.css";
+import "react-toastify/dist/ReactToastify.min.css";
+import { PrivateLayout, PublicLayout } from "./components/Layouts";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Home } from "./features/Home";
 
 function App() {
 	const { isLoggedIn } = useAuthUser();
@@ -18,7 +18,7 @@ function App() {
 					{/* private layout with private route children */}
 					{isLoggedIn ? (
 						<Route element={<PrivateLayout />}>
-							<Route path="/" element={<Home />} />							 
+							<Route path="/" element={<Home />} />
 							{/* route marker - remove if you don't want feature routes added by default */}
 							<Route path="/ingredients" element={<IngredientList />} />
 							<Route path="/recipes" element={<RecipeList />} />
