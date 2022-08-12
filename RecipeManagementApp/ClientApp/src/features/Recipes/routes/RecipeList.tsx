@@ -14,23 +14,48 @@ import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
 import { Pagination } from "../../../types/api/index";
 
-function RecipeList() {
+interface PaginatedTableContextResponse {
+	setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+	pageNumber: number;
+	pageSize: number;
+	setPageSize: React.Dispatch<React.SetStateAction<number>>;
+	sorting: SortingState;
+	setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+}
+
+const PaginatedTableContext = React.createContext<PaginatedTableContextResponse>(
+	{} as PaginatedTableContextResponse,
+);
+function PaginatedTableProvider(props: any) {
+	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [pageSize, setPageSize] = React.useState<number>(1);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
-	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const value = { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber };
 
-	/* TODO 
+	return <PaginatedTableContext.Provider value={value} {...props} />;
+}
 
-		Want to have the recipe hook and columns in the list page and feed just that to the table and the table cant take care of the rest
+function RecipeList() {
+	return (
+		<PaginatedTableProvider>
+			<h1>Recipes Table</h1>
+			<RecipeListTable />
+		</PaginatedTableProvider>
+	);
+}
 
-		*Problem*: The recipe hook needs the sort order and page size to work properly, but the table should be owning that.
-		*Solution*: Take another look at KCD context to see if i can make a context wrapper with the data
+function usePaginatedTableContext() {
+	const context = React.useContext(PaginatedTableContext);
+	if (!context)
+		throw new Error("usePaginatedTableContext must be used within a PaginatedTableProvider");
+	return context;
+}
 
-	*/
+function RecipeListTable() {
+	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
 
-	// THIS...
 	const { data: recipeResponse, isLoading } = useRecipes({
-		sortOrder: sorting,
+		sortOrder: sorting as SortingState,
 		pageSize,
 		pageNumber,
 	});
@@ -55,53 +80,29 @@ function RecipeList() {
 			header: () => <span className="px-2 py-1">Directions</span>,
 		}),
 	];
-	// ... TO THIS would be on the list, the rest will be in the table component... maybe add some props for something like starting page size
 
 	if (isLoading) return <div>Loading...</div>;
 	return (
-		<>
-			<h1>Recipes Table</h1>
-			<PaginationTable
-				data={recipeData}
-				columns={columns}
-				apiPagination={recipePagination}
-				setPageNumber={setPageNumber}
-				pageNumber={pageNumber}
-				pageSize={pageSize}
-				setPageSize={setPageSize}
-				sorting={sorting}
-				setSorting={setSorting}
-				entityPlural="Recipes"
-			/>
-		</>
+		<PaginatedTable
+			data={recipeData}
+			columns={columns}
+			apiPagination={recipePagination}
+			entityPlural="Recipes"
+		/>
 	);
 }
 
-interface PaginationTableProps {
+interface PaginatedTableProps {
 	data: any[] | undefined;
 	columns: ColumnDef<any, any>[];
 	apiPagination: Pagination | undefined;
-	setPageNumber: React.Dispatch<React.SetStateAction<number>>;
-	pageNumber: number;
-	pageSize: number;
-	setPageSize: React.Dispatch<React.SetStateAction<number>>;
-	sorting: SortingState;
-	setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
 	entityPlural: string;
 }
 
-function PaginationTable({
-	data = [],
-	columns,
-	apiPagination,
-	setPageNumber,
-	pageNumber,
-	pageSize,
-	setPageSize,
-	sorting,
-	setSorting,
-	entityPlural,
-}: PaginationTableProps) {
+function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: PaginatedTableProps) {
+	const { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber } =
+		usePaginatedTableContext();
+
 	const table = useReactTable({
 		data: data ?? ([] as any[]),
 		columns,
@@ -269,5 +270,4 @@ function PaginationTable({
 		</div>
 	);
 }
-
 export { RecipeList };
