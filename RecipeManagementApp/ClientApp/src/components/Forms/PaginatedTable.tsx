@@ -97,13 +97,6 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 		//
 	});
 
-	useEffect(
-		function resetPageNumber() {
-			setPageNumber(1);
-		},
-		[pageSize],
-	);
-
 	return (
 		<div className="">
 			{data && data.length > 0 ? (
@@ -230,6 +223,7 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 											value={pageSize}
 											onChange={(e) => {
 												setPageSize(Number(e.target.value));
+												setPageNumber(1);
 											}}
 										>
 											{PageSizeOptions.map((selectedPageSize) => (
