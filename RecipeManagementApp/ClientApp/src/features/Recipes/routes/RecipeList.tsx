@@ -78,143 +78,155 @@ function RecipeList() {
 
 	if (isLoading) return <div>Loading...</div>;
 	return (
-		<>
-			<>
-				{recipeData && recipeData.length > 0 ? (
-					<>
-						<table>
-							<thead>
-								{table.getHeaderGroups().map((headerGroup) => (
-									<tr key={headerGroup.id}>
-										{headerGroup.headers.map((header) => (
-											<th key={header.id} colSpan={header.colSpan}>
-												{header.isPlaceholder ? null : (
-													<div
-														{...{
-															className: header.column.getCanSort()
-																? "cursor-pointer select-none"
-																: "",
-															onClick: header.column.getToggleSortingHandler(),
-														}}
-													>
-														{flexRender(header.column.columnDef.header, header.getContext())}
-														{{
-															asc: " 🔼",
-															desc: " 🔽",
-														}[header.column.getIsSorted() as string] ?? null}
-													</div>
-												)}
-											</th>
+		<div className="">
+			{recipeData && recipeData.length > 0 ? (
+				<div className="flex flex-col mt-8">
+					<div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+						<div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+							<div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+								<table className="min-w-full">
+									<thead>
+										{table.getHeaderGroups().map((headerGroup) => (
+											<tr key={headerGroup.id}>
+												{headerGroup.headers.map((header) => (
+													<th key={header.id} colSpan={header.colSpan} className="text-left">
+														{header.isPlaceholder ? null : (
+															<div
+																{...{
+																	className: header.column.getCanSort()
+																		? "cursor-pointer select-none"
+																		: "",
+																	onClick: header.column.getToggleSortingHandler(),
+																}}
+															>
+																{flexRender(header.column.columnDef.header, header.getContext())}
+																{{
+																	asc: " 🔼",
+																	desc: " 🔽",
+																}[header.column.getIsSorted() as string] ?? null}
+															</div>
+														)}
+													</th>
+												))}
+											</tr>
 										))}
-									</tr>
-								))}
-							</thead>
-							<tbody>
-								{table.getRowModel().rows.map((row) => (
-									<tr key={row.id}>
-										{row.getVisibleCells().map((cell) => (
-											<td key={cell.id}>
-												{flexRender(cell.column.columnDef.cell, cell.getContext())}
-											</td>
+									</thead>
+									<tbody>
+										{table.getRowModel().rows.map((row) => (
+											<tr key={row.id}>
+												{row.getVisibleCells().map((cell) => (
+													<td key={cell.id}>
+														{flexRender(cell.column.columnDef.cell, cell.getContext())}
+													</td>
+												))}
+											</tr>
 										))}
-									</tr>
-								))}
-							</tbody>
-						</table>
+									</tbody>
+								</table>
 
-						<div className="flex items-center gap-2">
-							<button
-								className={clsx(
-									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasPrevious
-										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-										: "",
-								)}
-								onClick={() => setPageNumber(1)}
-								disabled={!recipePagination?.hasPrevious}
-							>
-								{"⏪"}
-							</button>
-							<button
-								className={clsx(
-									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasPrevious
-										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-										: "",
-								)}
-								onClick={() =>
-									setPageNumber(recipePagination?.pageNumber ? recipePagination?.pageNumber - 1 : 1)
-								}
-								disabled={!recipePagination?.hasPrevious}
-							>
-								{"◀️"}
-							</button>
-							<button
-								className={clsx(
-									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasNext
-										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-										: "",
-								)}
-								onClick={() =>
-									setPageNumber(recipePagination?.pageNumber ? recipePagination?.pageNumber + 1 : 1)
-								}
-								disabled={!recipePagination?.hasNext}
-							>
-								{"▶️"}
-							</button>
-							<button
-								className={clsx(
-									"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-									!recipePagination?.hasNext
-										? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-										: "",
-								)}
-								onClick={() =>
-									setPageNumber(recipePagination?.totalPages ? recipePagination?.totalPages : 1)
-								}
-								disabled={!recipePagination?.hasNext}
-							>
-								{"⏩"}
-							</button>
-							<span className="flex items-center gap-1">
-								<div>Page</div>
-								<strong>
-									{pageNumber} of {recipePagination?.totalPages}
-								</strong>
-							</span>
-							<span className="flex items-center gap-1">
-								| Go to page:
-								<input
-									type="number"
-									// defaultValue={recipePagination?.pageNumber ? recipePagination?.pageNumber : 1}
-									onChange={(e) => {
-										const page = e.target.value ? Number(e.target.value) : 1;
-										setPageNumber(page);
-									}}
-									value={pageNumber}
-									className="w-16 p-1 border rounded"
-								/>
-							</span>
-							<select
-								value={pageSize}
-								onChange={(e) => {
-									setPageSize(Number(e.target.value));
-								}}
-							>
-								{[1, 10, 20, 30, 40, 50].map((selectedPageSize) => (
-									<option key={selectedPageSize} value={selectedPageSize}>
-										Show {selectedPageSize}
-									</option>
-								))}
-							</select>
+								<div className="px-3 py-2">
+									<div className="flex items-center gap-2">
+										<button
+											className={clsx(
+												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+												!recipePagination?.hasPrevious
+													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+													: "",
+											)}
+											onClick={() => setPageNumber(1)}
+											disabled={!recipePagination?.hasPrevious}
+										>
+											{"⏪"}
+										</button>
+										<button
+											className={clsx(
+												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+												!recipePagination?.hasPrevious
+													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+													: "",
+											)}
+											onClick={() =>
+												setPageNumber(
+													recipePagination?.pageNumber ? recipePagination?.pageNumber - 1 : 1,
+												)
+											}
+											disabled={!recipePagination?.hasPrevious}
+										>
+											{"◀️"}
+										</button>
+										<button
+											className={clsx(
+												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+												!recipePagination?.hasNext
+													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+													: "",
+											)}
+											onClick={() =>
+												setPageNumber(
+													recipePagination?.pageNumber ? recipePagination?.pageNumber + 1 : 1,
+												)
+											}
+											disabled={!recipePagination?.hasNext}
+										>
+											{"▶️"}
+										</button>
+										<button
+											className={clsx(
+												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+												!recipePagination?.hasNext
+													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+													: "",
+											)}
+											onClick={() =>
+												setPageNumber(
+													recipePagination?.totalPages ? recipePagination?.totalPages : 1,
+												)
+											}
+											disabled={!recipePagination?.hasNext}
+										>
+											{"⏩"}
+										</button>
+										<span className="flex items-center gap-1">
+											<div>Page</div>
+											<strong>
+												{pageNumber} of {recipePagination?.totalPages}
+											</strong>
+										</span>
+										<span className="flex items-center gap-1">
+											| Go to page:
+											<input
+												type="number"
+												// defaultValue={recipePagination?.pageNumber ? recipePagination?.pageNumber : 1}
+												onChange={(e) => {
+													const page = e.target.value ? Number(e.target.value) : 1;
+													setPageNumber(page);
+												}}
+												value={pageNumber}
+												className="w-16 p-1 border rounded"
+											/>
+										</span>
+										<select
+											value={pageSize}
+											onChange={(e) => {
+												setPageSize(Number(e.target.value));
+											}}
+										>
+											{[1, 10, 20, 30, 40, 50].map((selectedPageSize) => (
+												<option key={selectedPageSize} value={selectedPageSize}>
+													Show {selectedPageSize}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
+							</div>
 						</div>
-					</>
-				) : (
-					<div>No Recipes Found</div>
-				)}
-			</>
-		</>
+					</div>
+				</div>
+			) : (
+				<div>No Recipes Found</div>
+			)}
+		</div>
 	);
 }
 
