@@ -27,7 +27,7 @@ export const useRecipes = ({ pageNumber, pageSize, filters, sortOrder }: QueryPa
 		? sortOrder?.map((s) => (s.desc ? `-${s.id}` : s.id)).join(",")
 		: undefined;
 
-	let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrderString });
+	let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrder: sortOrderString });
 
 	return useQuery(
 		RecipeKeys.list(queryParams ?? ''),

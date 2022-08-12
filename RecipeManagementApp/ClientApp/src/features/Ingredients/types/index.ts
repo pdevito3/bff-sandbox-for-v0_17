@@ -1,10 +1,10 @@
-import { WraptSortingState } from "@/types/api";
+import { SortingState } from "@tanstack/react-table";
 
 export interface QueryParams {
   pageNumber?: number;
   pageSize?: number;
   filters?: string;
-  sortOrder?: WraptSortingState;
+  sortOrder?: SortingState;
 }
 
 export interface IngredientDto {

@@ -1,18 +1,7 @@
-import {
-	ColumnDef,
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	getSortedRowModel,
-	SortingState,
-	useReactTable,
-} from "@tanstack/react-table";
-import clsx from "clsx";
+import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import React from "react";
 import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
-import { Pagination } from "../../../types/api/index";
 import {
 	PaginatedTableProvider,
 	usePaginatedTableContext,

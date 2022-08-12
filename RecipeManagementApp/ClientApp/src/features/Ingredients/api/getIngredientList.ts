@@ -26,7 +26,7 @@ export const useIngredients = ({ pageNumber, pageSize, filters, sortOrder }: Que
 		? sortOrder?.map((s) => (s.desc ? `-${s.id}` : s.id)).join(",")
 		: undefined;
 
-	let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrderString });
+		let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrder: sortOrderString });
 
 	return useQuery(
 		IngredientKeys.list(queryParams ?? ''),

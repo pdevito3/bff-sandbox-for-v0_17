@@ -89,6 +89,7 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 		},
 		onSortingChange: setSorting,
 		manualPagination: true,
+		manualSorting: true,
 
 		// pipeline
 		getCoreRowModel: getCoreRowModel(),
