@@ -1,4 +1,5 @@
 import {
+	ColumnDef,
 	createColumnHelper,
 	flexRender,
 	getCoreRowModel,
@@ -11,6 +12,7 @@ import clsx from "clsx";
 import React from "react";
 import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
+import { Pagination } from "../../../types/api/index";
 
 function RecipeList() {
 	const [pageSize, setPageSize] = React.useState<number>(1);
@@ -55,8 +57,53 @@ function RecipeList() {
 	];
 	// ... TO THIS would be on the list, the rest will be in the table component... maybe add some props for something like starting page size
 
+	if (isLoading) return <div>Loading...</div>;
+	return (
+		<>
+			<h1>Recipes Table</h1>
+			<PaginationTable
+				data={recipeData}
+				columns={columns}
+				apiPagination={recipePagination}
+				setPageNumber={setPageNumber}
+				pageNumber={pageNumber}
+				pageSize={pageSize}
+				setPageSize={setPageSize}
+				sorting={sorting}
+				setSorting={setSorting}
+				entityPlural="Recipes"
+			/>
+		</>
+	);
+}
+
+interface PaginationTableProps {
+	data: any[] | undefined;
+	columns: ColumnDef<any, any>[];
+	apiPagination: Pagination | undefined;
+	setPageNumber: React.Dispatch<React.SetStateAction<number>>;
+	pageNumber: number;
+	pageSize: number;
+	setPageSize: React.Dispatch<React.SetStateAction<number>>;
+	sorting: SortingState;
+	setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+	entityPlural: string;
+}
+
+function PaginationTable({
+	data = [],
+	columns,
+	apiPagination,
+	setPageNumber,
+	pageNumber,
+	pageSize,
+	setPageSize,
+	sorting,
+	setSorting,
+	entityPlural,
+}: PaginationTableProps) {
 	const table = useReactTable({
-		data: recipeData ?? ([] as RecipeDto[]),
+		data: data ?? ([] as any[]),
 		columns,
 		state: {
 			sorting,
@@ -76,10 +123,9 @@ function RecipeList() {
 		//
 	});
 
-	if (isLoading) return <div>Loading...</div>;
 	return (
 		<div className="">
-			{recipeData && recipeData.length > 0 ? (
+			{data && data.length > 0 ? (
 				<div className="flex flex-col mt-8">
 					<div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 						<div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -129,74 +175,68 @@ function RecipeList() {
 										<button
 											className={clsx(
 												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!recipePagination?.hasPrevious
+												!apiPagination?.hasPrevious
 													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
 													: "",
 											)}
 											onClick={() => setPageNumber(1)}
-											disabled={!recipePagination?.hasPrevious}
+											disabled={!apiPagination?.hasPrevious}
 										>
 											{"⏪"}
 										</button>
 										<button
 											className={clsx(
 												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!recipePagination?.hasPrevious
+												!apiPagination?.hasPrevious
 													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
 													: "",
 											)}
 											onClick={() =>
-												setPageNumber(
-													recipePagination?.pageNumber ? recipePagination?.pageNumber - 1 : 1,
-												)
+												setPageNumber(apiPagination?.pageNumber ? apiPagination?.pageNumber - 1 : 1)
 											}
-											disabled={!recipePagination?.hasPrevious}
+											disabled={!apiPagination?.hasPrevious}
 										>
 											{"◀️"}
 										</button>
 										<button
 											className={clsx(
 												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!recipePagination?.hasNext
+												!apiPagination?.hasNext
 													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
 													: "",
 											)}
 											onClick={() =>
-												setPageNumber(
-													recipePagination?.pageNumber ? recipePagination?.pageNumber + 1 : 1,
-												)
+												setPageNumber(apiPagination?.pageNumber ? apiPagination?.pageNumber + 1 : 1)
 											}
-											disabled={!recipePagination?.hasNext}
+											disabled={!apiPagination?.hasNext}
 										>
 											{"▶️"}
 										</button>
 										<button
 											className={clsx(
 												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!recipePagination?.hasNext
+												!apiPagination?.hasNext
 													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
 													: "",
 											)}
 											onClick={() =>
-												setPageNumber(
-													recipePagination?.totalPages ? recipePagination?.totalPages : 1,
-												)
+												setPageNumber(apiPagination?.totalPages ? apiPagination?.totalPages : 1)
 											}
-											disabled={!recipePagination?.hasNext}
+											disabled={!apiPagination?.hasNext}
 										>
 											{"⏩"}
 										</button>
 										<span className="flex items-center gap-1">
 											<div>Page</div>
 											<strong>
-												{pageNumber} of {recipePagination?.totalPages}
+												{pageNumber} of {apiPagination?.totalPages}
 											</strong>
 										</span>
 										<span className="flex items-center gap-1">
 											| Go to page:
 											<input
 												type="number"
-												// defaultValue={recipePagination?.pageNumber ? recipePagination?.pageNumber : 1}
+												// defaultValue={apiPagination?.pageNumber ? apiPagination?.pageNumber : 1}
 												onChange={(e) => {
 													const page = e.target.value ? Number(e.target.value) : 1;
 													setPageNumber(page);
@@ -224,7 +264,7 @@ function RecipeList() {
 					</div>
 				</div>
 			) : (
-				<div>No Recipes Found</div>
+				<div>No {entityPlural} Found</div>
 			)}
 		</div>
 	);
