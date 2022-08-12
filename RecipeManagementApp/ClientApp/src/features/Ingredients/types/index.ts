@@ -1,24 +1,26 @@
+import { WraptSortingState } from "@/types/api";
+
 export interface QueryParams {
   pageNumber?: number;
   pageSize?: number;
   filters?: string;
-  sortOrder?: string;
+  sortOrder?: WraptSortingState;
 }
 
 export interface IngredientDto {
   id: string;
-  Name: string;
-  Quantity: string;
-  Measure: string;
-  RecipeId: string;
+  name: string;
+  quantity: string;
+  measure: string;
+  recipeId: string;
 }
 
 export interface IngredientForManipulationDto {
   id: string;
-  Name: string;
-  Quantity: string;
-  Measure: string;
-  RecipeId: string;
+  name: string;
+  quantity: string;
+  measure: string;
+  recipeId: string;
 }
 
 export interface IngredientForCreationDto extends IngredientForManipulationDto { }

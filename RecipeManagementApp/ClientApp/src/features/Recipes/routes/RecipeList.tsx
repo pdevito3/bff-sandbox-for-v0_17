@@ -18,13 +18,29 @@ import {
 	usePaginatedTableContext,
 	PaginatedTable,
 } from "@/components/Forms/PaginatedTable";
+import { useIngredients } from "@/features/Ingredients/api";
+import { IngredientDto } from "@/features/Ingredients/types";
 
 function RecipeList() {
 	return (
-		<PaginatedTableProvider>
-			<h1>Recipes Table</h1>
-			<RecipeListTable />
-		</PaginatedTableProvider>
+		<div className="space-y-6">
+			<div className="">
+				<h1>Recipes Table</h1>
+				<div className="py-2">
+					<PaginatedTableProvider>
+						<RecipeListTable />
+					</PaginatedTableProvider>
+				</div>
+			</div>
+			<div className="">
+				<h1>Ingredients Table</h1>
+				<div className="py-2">
+					<PaginatedTableProvider>
+						<IngredientListTable />
+					</PaginatedTableProvider>
+				</div>
+			</div>
+		</div>
 	);
 }
 
@@ -65,6 +81,42 @@ function RecipeListTable() {
 			columns={columns}
 			apiPagination={recipePagination}
 			entityPlural="Recipes"
+		/>
+	);
+}
+
+function IngredientListTable() {
+	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
+
+	const { data: ingredientsResponse, isLoading } = useIngredients({
+		sortOrder: sorting as SortingState,
+		pageSize,
+		pageNumber,
+	});
+	const ingredientsData = ingredientsResponse?.data;
+	const ingredientsPagination = ingredientsResponse?.pagination;
+
+	const columnHelper = createColumnHelper<IngredientDto>();
+	const columns = [
+		columnHelper.accessor((row) => row.name, {
+			id: "name",
+			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
+			header: () => <span className="px-2 py-1">Title</span>,
+		}),
+		columnHelper.accessor((row) => row.quantity, {
+			id: "quantity",
+			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
+			header: () => <span className="px-2 py-1">Quantity</span>,
+		}),
+	];
+
+	if (isLoading) return <div>Loading...</div>;
+	return (
+		<PaginatedTable
+			data={ingredientsData}
+			columns={columns}
+			apiPagination={ingredientsPagination}
+			entityPlural="Ingredients"
 		/>
 	);
 }

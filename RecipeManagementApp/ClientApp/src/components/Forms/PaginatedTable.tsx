@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import React from "react";
+import React, { useEffect } from "react";
 import { Pagination } from "../../types/api/index";
 
 interface PaginatedTableContextResponse {
@@ -24,7 +24,7 @@ const PaginatedTableContext = React.createContext<PaginatedTableContextResponse>
 	{} as PaginatedTableContextResponse,
 );
 function PaginatedTableProvider(props: any) {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [sorting, setSorting] = React.useState<SortingState>();
 	const [pageSize, setPageSize] = React.useState<number>(1);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
 	const value = { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber };
@@ -34,7 +34,7 @@ function PaginatedTableProvider(props: any) {
 
 function usePaginatedTableContext() {
 	const context = React.useContext(PaginatedTableContext);
-	if (!context)
+	if (Object.keys(context).length === 0)
 		throw new Error("usePaginatedTableContext must be used within a PaginatedTableProvider");
 	return context;
 }
@@ -70,10 +70,17 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 		//
 	});
 
+	useEffect(
+		function resetPageNumber() {
+			setPageNumber(1);
+		},
+		[pageSize],
+	);
+
 	return (
 		<div className="">
 			{data && data.length > 0 ? (
-				<div className="flex flex-col mt-8">
+				<div className="flex flex-col">
 					<div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 						<div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
 							<div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
