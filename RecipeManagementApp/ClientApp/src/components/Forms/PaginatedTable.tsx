@@ -18,16 +18,28 @@ interface PaginatedTableContextResponse {
 	setPageSize: React.Dispatch<React.SetStateAction<number>>;
 	sorting: SortingState;
 	setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+	initialPageSize: number;
 }
 
 const PaginatedTableContext = React.createContext<PaginatedTableContextResponse>(
 	{} as PaginatedTableContextResponse,
 );
+
+// TODO improve typing. initialPageSize should be a number limited to the options in the dropdown
 function PaginatedTableProvider(props: any) {
+	const initialPageSize = props?.initialPageSize ?? 10;
 	const [sorting, setSorting] = React.useState<SortingState>();
-	const [pageSize, setPageSize] = React.useState<number>(1);
+	const [pageSize, setPageSize] = React.useState<number>(initialPageSize);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
-	const value = { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber };
+	const value = {
+		sorting,
+		setSorting,
+		pageSize,
+		setPageSize,
+		pageNumber,
+		setPageNumber,
+		initialPageSize,
+	};
 
 	return <PaginatedTableContext.Provider value={value} {...props} />;
 }
@@ -38,6 +50,7 @@ function usePaginatedTableContext() {
 		throw new Error("usePaginatedTableContext must be used within a PaginatedTableProvider");
 	return context;
 }
+
 interface PaginatedTableProps {
 	data: any[] | undefined;
 	columns: ColumnDef<any, any>[];
@@ -46,7 +59,7 @@ interface PaginatedTableProps {
 }
 
 function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: PaginatedTableProps) {
-	const { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber } =
+	const { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber, initialPageSize } =
 		usePaginatedTableContext();
 
 	const table = useReactTable({
@@ -57,7 +70,7 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 		},
 		initialState: {
 			pagination: {
-				pageSize: 1,
+				pageSize: initialPageSize,
 			},
 		},
 		onSortingChange: setSorting,

@@ -35,7 +35,7 @@ function RecipeList() {
 			<div className="">
 				<h1>Ingredients Table</h1>
 				<div className="py-2">
-					<PaginatedTableProvider>
+					<PaginatedTableProvider initialPageSize={1}>
 						<IngredientListTable />
 					</PaginatedTableProvider>
 				</div>
