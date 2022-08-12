@@ -104,135 +104,144 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 				<div className="flex flex-col">
 					<div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 						<div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-							<div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-								<table className="min-w-full">
-									<thead>
-										{table.getHeaderGroups().map((headerGroup) => (
-											<tr key={headerGroup.id}>
-												{headerGroup.headers.map((header) => (
-													<th key={header.id} colSpan={header.colSpan} className="text-left">
-														{header.isPlaceholder ? null : (
-															<div
-																{...{
-																	className: header.column.getCanSort()
-																		? "cursor-pointer select-none"
-																		: "",
-																	onClick: header.column.getToggleSortingHandler(),
-																}}
-															>
-																{flexRender(header.column.columnDef.header, header.getContext())}
-																{{
-																	asc: " 🔼",
-																	desc: " 🔽",
-																}[header.column.getIsSorted() as string] ?? null}
-															</div>
-														)}
-													</th>
-												))}
-											</tr>
-										))}
-									</thead>
-									<tbody>
-										{table.getRowModel().rows.map((row) => (
-											<tr key={row.id}>
-												{row.getVisibleCells().map((cell) => (
-													<td key={cell.id}>
-														{flexRender(cell.column.columnDef.cell, cell.getContext())}
-													</td>
-												))}
-											</tr>
-										))}
-									</tbody>
-								</table>
-
-								<div className="px-3 py-2">
-									<div className="flex items-center gap-2">
-										<button
-											className={clsx(
-												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!apiPagination?.hasPrevious
-													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-													: "",
-											)}
-											onClick={() => setPageNumber(1)}
-											disabled={!apiPagination?.hasPrevious}
-										>
-											{"⏪"}
-										</button>
-										<button
-											className={clsx(
-												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!apiPagination?.hasPrevious
-													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-													: "",
-											)}
-											onClick={() =>
-												setPageNumber(apiPagination?.pageNumber ? apiPagination?.pageNumber - 1 : 1)
-											}
-											disabled={!apiPagination?.hasPrevious}
-										>
-											{"◀️"}
-										</button>
-										<button
-											className={clsx(
-												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!apiPagination?.hasNext
-													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-													: "",
-											)}
-											onClick={() =>
-												setPageNumber(apiPagination?.pageNumber ? apiPagination?.pageNumber + 1 : 1)
-											}
-											disabled={!apiPagination?.hasNext}
-										>
-											{"▶️"}
-										</button>
-										<button
-											className={clsx(
-												"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
-												!apiPagination?.hasNext
-													? "cursor-not-allowed opacity-50 transition-opacity duration-500"
-													: "",
-											)}
-											onClick={() =>
-												setPageNumber(apiPagination?.totalPages ? apiPagination?.totalPages : 1)
-											}
-											disabled={!apiPagination?.hasNext}
-										>
-											{"⏩"}
-										</button>
-										<span className="flex items-center gap-1">
-											<div>Page</div>
-											<strong>
-												{pageNumber} of {apiPagination?.totalPages}
-											</strong>
-										</span>
-										<span className="flex items-center gap-1">
-											| Go to page:
-											<input
-												type="number"
-												// defaultValue={apiPagination?.pageNumber ? apiPagination?.pageNumber : 1}
-												onChange={(e) => {
-													const page = e.target.value ? Number(e.target.value) : 1;
-													setPageNumber(page);
-												}}
-												value={pageNumber}
-												className="w-16 p-1 border rounded"
-											/>
-										</span>
-										<select
-											value={pageSize}
-											onChange={(e) => {
-												setPageSize(Number(e.target.value));
-												setPageNumber(1);
-											}}
-										>
-											{PageSizeOptions.map((selectedPageSize) => (
-												<option key={selectedPageSize} value={selectedPageSize}>
-													Show {selectedPageSize}
-												</option>
+							<div className="overflow-hidden shadow h-96 ring-1 ring-black ring-opacity-5 md:rounded-lg">
+								<div className="flex flex-col justify-between h-full">
+									<table className="min-w-full">
+										<thead>
+											{table.getHeaderGroups().map((headerGroup) => (
+												<tr key={headerGroup.id}>
+													{headerGroup.headers.map((header) => (
+														<th
+															key={header.id}
+															colSpan={header.colSpan}
+															className="px-2 py-3 text-left bg-gray-100"
+														>
+															{header.isPlaceholder ? null : (
+																<div
+																	{...{
+																		className: header.column.getCanSort()
+																			? "cursor-pointer select-none"
+																			: "",
+																		onClick: header.column.getToggleSortingHandler(),
+																	}}
+																>
+																	{flexRender(header.column.columnDef.header, header.getContext())}
+																	{{
+																		asc: " 🔼",
+																		desc: " 🔽",
+																	}[header.column.getIsSorted() as string] ?? null}
+																</div>
+															)}
+														</th>
+													))}
+												</tr>
 											))}
-										</select>
+										</thead>
+										<tbody>
+											{table.getRowModel().rows.map((row) => (
+												<tr key={row.id}>
+													{row.getVisibleCells().map((cell) => (
+														<td key={cell.id} className="px-2 py-2">
+															{flexRender(cell.column.columnDef.cell, cell.getContext())}
+														</td>
+													))}
+												</tr>
+											))}
+										</tbody>
+									</table>
+									<div className="px-3 py-2">
+										<div className="flex items-center gap-2">
+											<button
+												className={clsx(
+													"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+													!apiPagination?.hasPrevious
+														? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+														: "",
+												)}
+												onClick={() => setPageNumber(1)}
+												disabled={!apiPagination?.hasPrevious}
+											>
+												{"⏪"}
+											</button>
+											<button
+												className={clsx(
+													"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+													!apiPagination?.hasPrevious
+														? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+														: "",
+												)}
+												onClick={() =>
+													setPageNumber(
+														apiPagination?.pageNumber ? apiPagination?.pageNumber - 1 : 1,
+													)
+												}
+												disabled={!apiPagination?.hasPrevious}
+											>
+												{"◀️"}
+											</button>
+											<button
+												className={clsx(
+													"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+													!apiPagination?.hasNext
+														? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+														: "",
+												)}
+												onClick={() =>
+													setPageNumber(
+														apiPagination?.pageNumber ? apiPagination?.pageNumber + 1 : 1,
+													)
+												}
+												disabled={!apiPagination?.hasNext}
+											>
+												{"▶️"}
+											</button>
+											<button
+												className={clsx(
+													"w-12 rounded-md border bg-gray-100 p-1 text-gray-800",
+													!apiPagination?.hasNext
+														? "cursor-not-allowed opacity-50 transition-opacity duration-500"
+														: "",
+												)}
+												onClick={() =>
+													setPageNumber(apiPagination?.totalPages ? apiPagination?.totalPages : 1)
+												}
+												disabled={!apiPagination?.hasNext}
+											>
+												{"⏩"}
+											</button>
+											<span className="flex items-center gap-1">
+												<div>Page</div>
+												<strong>
+													{pageNumber} of {apiPagination?.totalPages}
+												</strong>
+											</span>
+											<span className="flex items-center gap-1">
+												| Go to page:
+												<input
+													type="number"
+													// defaultValue={apiPagination?.pageNumber ? apiPagination?.pageNumber : 1}
+													onChange={(e) => {
+														const page = e.target.value ? Number(e.target.value) : 1;
+														setPageNumber(page);
+													}}
+													value={pageNumber}
+													className="w-16 p-1 border rounded"
+												/>
+											</span>
+											<select
+												value={pageSize}
+												onChange={(e) => {
+													setPageSize(Number(e.target.value));
+													setPageNumber(1);
+												}}
+											>
+												{PageSizeOptions.map((selectedPageSize) => (
+													<option key={selectedPageSize} value={selectedPageSize}>
+														Show {selectedPageSize}
+													</option>
+												))}
+											</select>
+										</div>
 									</div>
 								</div>
 							</div>
