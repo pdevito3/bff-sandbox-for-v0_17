@@ -8,7 +8,7 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import clsx from "clsx";
-import React, { useEffect } from "react";
+import React, { PropsWithChildren, useEffect } from "react";
 import { Pagination } from "../../types/api/index";
 
 interface PaginatedTableContextResponse {
@@ -30,10 +30,15 @@ export type PageSizeNumber = typeof PageSizeOptions[number];
 interface PaginatedTableProviderProps {
 	initialPageSize?: PageSizeNumber;
 	children: React.ReactNode;
+	props?: any;
 }
 
-function PaginatedTableProvider({ initialPageSize = 10, children }: PaginatedTableProviderProps) {
-	const [sorting, setSorting] = React.useState<SortingState>({} as SortingState);
+function PaginatedTableProvider({
+	initialPageSize = 10,
+	props,
+	children,
+}: PaginatedTableProviderProps) {
+	const [sorting, setSorting] = React.useState<SortingState>();
 	const [pageSize, setPageSize] = React.useState<number>(initialPageSize);
 	const [pageNumber, setPageNumber] = React.useState<number>(1);
 	const value = {
@@ -46,7 +51,11 @@ function PaginatedTableProvider({ initialPageSize = 10, children }: PaginatedTab
 		initialPageSize,
 	};
 
-	return <PaginatedTableContext.Provider value={value} />;
+	return (
+		<PaginatedTableContext.Provider value={value} {...props}>
+			{children}
+		</PaginatedTableContext.Provider>
+	);
 }
 
 function usePaginatedTableContext() {
