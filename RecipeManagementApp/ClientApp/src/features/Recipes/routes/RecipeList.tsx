@@ -149,6 +149,7 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 			apiPagination={recipePagination}
 			entityPlural="Recipes"
 			isLoading={isLoading}
+			onRowClick={(row) => alert(row.id)}
 		/>
 	);
 }

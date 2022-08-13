@@ -4,6 +4,7 @@ import {
 	getCoreRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
+	Row,
 	SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
@@ -71,6 +72,7 @@ interface PaginatedTableProps {
 	apiPagination: Pagination | undefined;
 	entityPlural: string;
 	isLoading?: boolean;
+	onRowClick?: (row: Row<any>) => void;
 }
 
 function PaginatedTable({
@@ -79,9 +81,13 @@ function PaginatedTable({
 	apiPagination,
 	entityPlural,
 	isLoading = true,
+	onRowClick,
 }: PaginatedTableProps) {
+	const rowIsClickable = onRowClick !== null && onRowClick !== undefined;
 	const { sorting, setSorting, pageSize, setPageSize, pageNumber, setPageNumber, initialPageSize } =
 		usePaginatedTableContext();
+
+	const skeletonRowCount = 2;
 
 	const table = useReactTable({
 		data: data ?? ([] as any[]),
@@ -106,7 +112,7 @@ function PaginatedTable({
 	});
 
 	return (
-		<div className="relative  h-[30rem] overflow-x-auto bg-gray-50 shadow-md dark:bg-gray-700 sm:rounded-lg">
+		<div className="relative h-[30rem] overflow-x-auto bg-gray-50 shadow-md dark:bg-gray-700 sm:rounded-lg">
 			{isLoading ? (
 				<div className="flex flex-col justify-between h-full divide-y">
 					<table className="pl-6 animate-pulse">
@@ -121,7 +127,7 @@ function PaginatedTable({
 						</thead>
 
 						<tbody className="pt-3 ">
-							{Array.from({ length: 3 }, (_, rowIndex) => (
+							{Array.from({ length: skeletonRowCount }, (_, rowIndex) => (
 								<tr key={`row${rowIndex}`} className="px-6 py-3">
 									{Array.from({ length: columns.length }, (_, cellIndex) => (
 										<td key={`row${cellIndex}col${rowIndex}`} className="px-6 py-3">
@@ -184,7 +190,13 @@ function PaginatedTable({
 									{table.getRowModel().rows.map((row) => (
 										<tr
 											key={row.id}
-											className="bg-white border-b hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
+											className={clsx(
+												"border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600",
+												rowIsClickable ? "cursor-pointer" : "",
+											)}
+											onClick={
+												rowIsClickable ? () => onRowClick && onRowClick(row.original) : undefined
+											}
 										>
 											{row.getVisibleCells().map((cell) => (
 												<td key={cell.id} className="px-6 py-4">
