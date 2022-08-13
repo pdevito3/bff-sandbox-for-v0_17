@@ -9,6 +9,7 @@ import {
 } from "@/components/Forms/PaginatedTable";
 import { useIngredients } from "@/features/Ingredients/api";
 import { IngredientDto } from "@/features/Ingredients/types";
+import { useState } from "react";
 
 function RecipeList() {
 	return (
@@ -25,6 +26,7 @@ function RecipeList() {
 				<h1>Ingredients Table</h1>
 				<div className="py-2">
 					<PaginatedTableProvider initialPageSize={1}>
+						{/* // TODO put filter here as something like `PaginatedTableSearch`??? */}
 						<IngredientListTable />
 					</PaginatedTableProvider>
 				</div>
@@ -77,10 +79,22 @@ function RecipeListTable() {
 function IngredientListTable() {
 	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
 
+	// TODO abstract to custom hook that can take in the props to filter on...
+	const [globalFilter, setGlobalFilter] = React.useState<string>();
+	const [queryFilter, setQueryFilter] = useState<string>();
+	function calculateAndSetQueryFilter(value: string) {
+		value.length > 0
+			? setQueryFilter(`(name|measure|quantity)@=*${value}`)
+			: setQueryFilter(undefined);
+		setGlobalFilter(String(value));
+	}
+	// .......................
+
 	const { data: ingredientsResponse, isLoading } = useIngredients({
 		sortOrder: sorting as SortingState,
 		pageSize,
 		pageNumber,
+		filters: queryFilter,
 	});
 	const ingredientsData = ingredientsResponse?.data;
 	const ingredientsPagination = ingredientsResponse?.pagination;
@@ -90,24 +104,69 @@ function IngredientListTable() {
 		columnHelper.accessor((row) => row.name, {
 			id: "name",
 			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
-			header: () => <span className="px-2 py-1">Title</span>,
+			header: () => <span className="px-2 py-1">Name</span>,
 		}),
 		columnHelper.accessor((row) => row.quantity, {
 			id: "quantity",
 			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
 			header: () => <span className="px-2 py-1">Quantity</span>,
 		}),
+		columnHelper.accessor((row) => row.measure, {
+			id: "measure",
+			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
+			header: () => <span className="px-2 py-1">Measure</span>,
+		}),
 	];
 
-	if (isLoading) return <div>Loading...</div>;
 	return (
-		<PaginatedTable
-			data={ingredientsData}
-			columns={columns}
-			apiPagination={ingredientsPagination}
-			entityPlural="Ingredients"
-		/>
+		<>
+			<DebouncedInput
+				value={globalFilter ?? ""}
+				onChange={(value) => calculateAndSetQueryFilter(String(value))}
+				className="p-2 border rounded-lg shadow font-lg"
+				placeholder="Search all columns..."
+			/>
+			<div className="pt-2">
+				{isLoading ? (
+					<div>Loading...</div>
+				) : (
+					<PaginatedTable
+						data={ingredientsData}
+						columns={columns}
+						apiPagination={ingredientsPagination}
+						entityPlural="Ingredients"
+					/>
+				)}
+			</div>
+		</>
 	);
+}
+
+function DebouncedInput({
+	value: initialValue,
+	onChange,
+	debounce = 500,
+	...props
+}: {
+	value: string | number;
+	onChange: (value: string | number) => void;
+	debounce?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+	const [value, setValue] = React.useState(initialValue);
+
+	React.useEffect(() => {
+		setValue(initialValue);
+	}, [initialValue]);
+
+	React.useEffect(() => {
+		const timeout = setTimeout(() => {
+			onChange(value);
+		}, debounce);
+
+		return () => clearTimeout(timeout);
+	}, [value]);
+
+	return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
 }
 
 export { RecipeList };
