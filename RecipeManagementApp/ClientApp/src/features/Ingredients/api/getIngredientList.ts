@@ -40,7 +40,7 @@ const [json] = await Promise.all([
 
 interface ingredientListHookProps extends QueryParams, delayProps {}
 
-export const useIngredients = ({ pageNumber, pageSize, filters, sortOrder, hasArtificialDelay=false, delayInMs=450 }: ingredientListHookProps) => {
+export const useIngredients = ({ pageNumber, pageSize, filters, sortOrder, hasArtificialDelay=false, delayInMs=650 }: ingredientListHookProps) => {
 	let sortOrderString = generateSieveSortOrder(sortOrder);
 	let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrder: sortOrderString });
 
