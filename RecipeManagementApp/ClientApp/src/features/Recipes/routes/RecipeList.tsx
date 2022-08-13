@@ -4,22 +4,35 @@ import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
 import { useIngredients } from "@/features/Ingredients/api";
 import { IngredientDto } from "@/features/Ingredients/types";
-import { useState } from "react";
 import {
 	PaginatedTableProvider,
 	usePaginatedTableContext,
 	PaginatedTable,
+	useGlobalFilter,
 } from "@/components/Forms";
 import DebouncedInput from "@/components/Forms/DebouncedInput";
+import queryString from "query-string";
 
 function RecipeList() {
+	const { globalFilter, queryFilter, calculateAndSetQueryFilter } = useGlobalFilter(
+		(value) => `(title|visibility|directions)@=*${value}`,
+	);
+
 	return (
 		<div className="space-y-6">
 			<div className="">
 				<h1>Recipes Table</h1>
 				<div className="py-2">
 					<PaginatedTableProvider>
-						<RecipeListTable />
+						<DebouncedInput
+							value={globalFilter ?? ""}
+							onChange={(value) => calculateAndSetQueryFilter(String(value))}
+							className="p-2 border rounded-lg shadow font-lg"
+							placeholder="Search all columns..."
+						/>
+						<div className="pt-2">
+							<RecipeListTable queryFilter={queryFilter} />
+						</div>
 					</PaginatedTableProvider>
 				</div>
 			</div>
@@ -27,7 +40,6 @@ function RecipeList() {
 				<h1>Ingredients Table</h1>
 				<div className="py-2">
 					<PaginatedTableProvider initialPageSize={1}>
-						{/* // TODO put filter here as something like `PaginatedTableSearch`??? */}
 						<IngredientListTable />
 					</PaginatedTableProvider>
 				</div>
@@ -36,13 +48,18 @@ function RecipeList() {
 	);
 }
 
-function RecipeListTable() {
+interface RecipeListTableProps {
+	queryFilter: string | undefined;
+}
+
+function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
 
 	const { data: recipeResponse, isLoading } = useRecipes({
 		sortOrder: sorting as SortingState,
 		pageSize,
 		pageNumber,
+		filters: queryFilter,
 	});
 	const recipeData = recipeResponse?.data;
 	const recipePagination = recipeResponse?.pagination;
@@ -79,18 +96,9 @@ function RecipeListTable() {
 
 function IngredientListTable() {
 	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
-
-	// TODO abstract to custom hook that can take in the props to filter on...
-	const [globalFilter, setGlobalFilter] = React.useState<string>();
-	const [queryFilter, setQueryFilter] = useState<string>();
-	function calculateAndSetQueryFilter(value: string) {
-		value.length > 0
-			? setQueryFilter(`(name|measure|quantity)@=*${value}`)
-			: setQueryFilter(undefined);
-		setGlobalFilter(String(value));
-	}
-	// .......................
-
+	const { globalFilter, queryFilter, calculateAndSetQueryFilter } = useGlobalFilter(
+		(value) => `(name|measure|quantity)@=*${value}`,
+	);
 	const { data: ingredientsResponse, isLoading } = useIngredients({
 		sortOrder: sorting as SortingState,
 		pageSize,

@@ -255,4 +255,16 @@ function PaginatedTable({ data = [], columns, apiPagination, entityPlural }: Pag
 	);
 }
 
-export { PaginatedTable, usePaginatedTableContext, PaginatedTableProvider };
+function useGlobalFilter(filter: (value: React.SetStateAction<string | undefined>) => string) {
+	const [globalFilter, setGlobalFilter] = React.useState<string>();
+	const [queryFilter, setQueryFilter] = React.useState<string>();
+
+	function calculateAndSetQueryFilter(value: string) {
+		value.length > 0 ? setQueryFilter(() => filter(value)) : setQueryFilter(undefined);
+		setGlobalFilter(String(value));
+	}
+
+	return { globalFilter, queryFilter, calculateAndSetQueryFilter };
+}
+
+export { PaginatedTable, usePaginatedTableContext, PaginatedTableProvider, useGlobalFilter };
