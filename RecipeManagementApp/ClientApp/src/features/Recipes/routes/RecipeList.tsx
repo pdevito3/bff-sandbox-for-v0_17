@@ -2,14 +2,15 @@ import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import React from "react";
 import { useRecipes } from "../api";
 import { RecipeDto } from "../types";
+import { useIngredients } from "@/features/Ingredients/api";
+import { IngredientDto } from "@/features/Ingredients/types";
+import { useState } from "react";
 import {
 	PaginatedTableProvider,
 	usePaginatedTableContext,
 	PaginatedTable,
-} from "@/components/Forms/PaginatedTable";
-import { useIngredients } from "@/features/Ingredients/api";
-import { IngredientDto } from "@/features/Ingredients/types";
-import { useState } from "react";
+} from "@/components/Forms";
+import DebouncedInput from "@/components/Forms/DebouncedInput";
 
 function RecipeList() {
 	return (
@@ -140,33 +141,6 @@ function IngredientListTable() {
 			</div>
 		</>
 	);
-}
-
-function DebouncedInput({
-	value: initialValue,
-	onChange,
-	debounce = 500,
-	...props
-}: {
-	value: string | number;
-	onChange: (value: string | number) => void;
-	debounce?: number;
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
-	const [value, setValue] = React.useState(initialValue);
-
-	React.useEffect(() => {
-		setValue(initialValue);
-	}, [initialValue]);
-
-	React.useEffect(() => {
-		const timeout = setTimeout(() => {
-			onChange(value);
-		}, debounce);
-
-		return () => clearTimeout(timeout);
-	}, [value]);
-
-	return <input {...props} value={value} onChange={(e) => setValue(e.target.value)} />;
 }
 
 export { RecipeList };
