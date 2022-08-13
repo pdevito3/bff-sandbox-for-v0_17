@@ -22,7 +22,7 @@ export default function PrivateSideNav() {
 	}, [pathname]);
 
 	return (
-		<div className="h-full">
+		<div className="min-h-screen">
 			<Transition.Root show={sidebarOpen} as={Fragment}>
 				<Dialog as="div" className="fixed inset-0 z-40 flex md:hidden" onClose={setSidebarOpen}>
 					<Transition.Child
@@ -34,7 +34,7 @@ export default function PrivateSideNav() {
 						leaveFrom="opacity-100"
 						leaveTo="opacity-0"
 					>
-						<Dialog.Overlay className="fixed inset-0 bg-gray-700 bg-opacity-75" />
+						<Dialog.Overlay className="fixed inset-0 bg-opacity-75 bg-slate-700" />
 					</Transition.Child>
 					<Transition.Child
 						as={Fragment}
@@ -46,7 +46,7 @@ export default function PrivateSideNav() {
 						leaveTo="translate-y-full"
 					>
 						<div className="absolute bottom-0 w-full h-1/2">
-							<div className="relative flex flex-col flex-1 w-full h-full bg-gray-800 rounded-t-xl">
+							<div className="relative flex flex-col flex-1 w-full h-full rounded-t-xl bg-slate-50 dark:bg-slate-800">
 								<Transition.Child
 									as={Fragment}
 									enter="ease-in-out duration-[400ms]"
@@ -81,14 +81,14 @@ export default function PrivateSideNav() {
 												className={({ isActive }) =>
 													clsx(
 														isActive
-															? "border-l-4 border-white bg-gray-900 text-white"
-															: "text-white hover:bg-gray-700 hover:bg-opacity-75",
+															? "border-l-4 border-white bg-slate-300 text-slate-900 dark:bg-slate-900 dark:text-white"
+															: "text-slate-900 hover:bg-slate-200 dark:text-white dark:hover:bg-slate-700 dark:hover:bg-opacity-75",
 														"group flex items-center p-4 text-base font-medium",
 													)
 												}
 											>
 												<item.icon
-													className="flex-shrink-0 w-6 h-6 mr-4 text-gray-400"
+													className="flex-shrink-0 w-6 h-6 mr-4 text-slate-400"
 													aria-hidden="true"
 												/>
 												{item.name}
@@ -106,16 +106,16 @@ export default function PrivateSideNav() {
 			</Transition.Root>
 
 			{/* Static sidebar for desktop */}
-			<div className="hidden h-full md:flex md:w-64 md:flex-col">
+			<div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
 				{/* Sidebar component, swap this element with another sidebar if you like */}
-				<div className="flex flex-col flex-1 min-h-0 bg-gray-800">
-					<div className="flex items-center flex-shrink-0 h-16 px-4 bg-gray-900 shadow-lg">
+				<div className="flex flex-col flex-1 min-h-0 bg-slate-50 dark:bg-slate-800">
+					<div className="flex items-center flex-shrink-0 h-16 px-4 shadow-md bg-slate-100 shadow-violet-500/40 dark:bg-slate-800">
 						<NavLink to={"/"}>
 							<img className="w-auto h-8" src={logo} alt="Logo" />
 						</NavLink>
 					</div>
 					<div className="flex flex-col flex-1 py-2 overflow-y-auto">
-						<nav className="flex-1 mt-6 space-y-1">
+						<nav className="flex-1 mt-2 space-y-1">
 							{navigation.map((item) => (
 								<NavLink
 									key={item.name}
@@ -123,14 +123,14 @@ export default function PrivateSideNav() {
 									className={({ isActive }) =>
 										clsx(
 											isActive
-												? "border-l-4 border-white bg-gray-900 text-white"
-												: "text-white hover:bg-gray-700 hover:bg-opacity-75",
+												? "border-l-4 border-violet-500 bg-slate-300 text-slate-900 dark:border-white dark:bg-slate-900 dark:text-white"
+												: "text-slate-900 hover:bg-slate-200 dark:text-white dark:hover:bg-slate-700 dark:hover:bg-opacity-75",
 											"group flex items-center px-3 py-3 text-sm font-medium",
 										)
 									}
 								>
 									<item.icon
-										className="flex-shrink-0 w-6 h-6 mr-3 text-gray-500"
+										className="flex-shrink-0 w-6 h-6 mr-3 text-slate-500"
 										aria-hidden="true"
 									/>
 									{item.name}
@@ -141,14 +141,14 @@ export default function PrivateSideNav() {
 				</div>
 			</div>
 			<div className="flex flex-col flex-1 md:pl-64">
-				<div className="absolute z-10 p-1 bg-gray-100 rounded-full bottom-4 right-4 sm:p-2 md:hidden">
+				<div className="absolute z-10 p-1 rounded-full bottom-4 right-4 bg-slate-100 sm:p-2 md:hidden">
 					<button
 						type="button"
-						className="-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
+						className="-ml-0.5 -mt-0.5 inline-flex h-12 w-12 items-center justify-center rounded-md text-slate-500 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-slate-500"
 						onClick={() => setSidebarOpen(true)}
 					>
 						<span className="sr-only">Open sidebar</span>
-						<IoMenu className="w-6 h-6 text-gray-900" aria-hidden="true" />
+						<IoMenu className="w-6 h-6 text-slate-900" aria-hidden="true" />
 					</button>
 				</div>
 			</div>

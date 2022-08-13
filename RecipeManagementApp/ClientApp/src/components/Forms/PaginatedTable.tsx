@@ -191,8 +191,10 @@ function PaginatedTable({
 										<tr
 											key={row.id}
 											className={clsx(
-												"border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600",
-												rowIsClickable ? "cursor-pointer" : "",
+												"border-b bg-white  dark:border-gray-700 dark:bg-gray-800 ",
+												rowIsClickable
+													? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
+													: "",
 											)}
 											onClick={
 												rowIsClickable ? () => onRowClick && onRowClick(row.original) : undefined
@@ -209,7 +211,7 @@ function PaginatedTable({
 							</table>
 
 							<div
-								className="flex items-center justify-between px-3 py-2 bg-gray-800"
+								className="flex items-center justify-between px-3 py-2 bg-white dark:bg-gray-800"
 								aria-label={`Table navigation for ${entityPlural} table`}
 							>
 								<div className="flex items-center space-x-3">
@@ -234,6 +236,7 @@ function PaginatedTable({
 								/>
 							</span> */}
 									<select
+										className="dark:text-blue-500"
 										value={pageSize}
 										onChange={(e) => {
 											setPageSize(Number(e.target.value));

@@ -181,17 +181,20 @@ function IngredientListTable({ queryFilter }: IngredientListTableProps) {
 			id: "name",
 			cell: (info) => <p className="">{info.getValue()}</p>,
 			header: () => <span className="">Name</span>,
+			enableMultiSort: true,
 		}),
 		columnHelper.accessor((row) => row.quantity, {
 			id: "quantity",
 			cell: (info) => <p className="">{info.getValue()}</p>,
 			header: () => <span className="">Quantity</span>,
+			enableMultiSort: true,
 		}),
-		// columnHelper.accessor((row) => row.measure, {
-		// 	id: "measure",
-		// 	cell: (info) => <p className="">{info.getValue()}</p>,
-		// 	header: () => <span className="">Measure</span>,
-		// }),
+		columnHelper.accessor((row) => row.measure, {
+			id: "measure",
+			cell: (info) => <p className="">{info.getValue()}</p>,
+			header: () => <span className="">Measure</span>,
+			enableMultiSort: true,
+		}),
 	];
 
 	return (

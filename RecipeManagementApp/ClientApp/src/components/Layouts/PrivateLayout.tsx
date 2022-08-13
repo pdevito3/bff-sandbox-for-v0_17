@@ -11,20 +11,23 @@ function PrivateLayout() {
 		<div className="flex w-full h-full">
 			<PrivateSideNav />
 			<div className="w-full h-full">
-				<PrivateHeader />
-				<main className="flex-1 h-full p-4 bg-gray-50 dark:bg-gray-900">
-					<div className="">
-						{!username ? (
-							<a
-								href="/bff/login?returnUrl=/"
-								className="inline-block px-4 py-2 text-base font-medium text-center text-white bg-blue-500 border border-transparent rounded-md hover:bg-opacity-75"
-							>
-								Login
-							</a>
-						) : null}
+				{/* this div covers the bg for main bodies that don't have a full height */}
+				<div className="flex-1 h-full bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-white">
+					<div className="min-h-screen ">
+						<PrivateHeader />
+						<main className="px-4 py-2 bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-white sm:px-6 md:py-4 md:px-8">
+							{!username ? (
+								<a
+									href="/bff/login?returnUrl=/"
+									className="inline-block px-4 py-2 text-base font-medium text-center text-white bg-blue-500 border border-transparent rounded-md hover:bg-opacity-75"
+								>
+									Login
+								</a>
+							) : null}
+							<Outlet />
+						</main>
 					</div>
-					<Outlet />
-				</main>
+				</div>
 			</div>
 		</div>
 	);

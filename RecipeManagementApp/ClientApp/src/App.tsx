@@ -12,7 +12,7 @@ function App() {
 	const { isLoggedIn } = useAuthUser();
 
 	return (
-		<div className="h-screen scroll-smooth antialiased [font-feature-settings:'ss01']">
+		<div className="h-full scroll-smooth antialiased [font-feature-settings:'ss01']">
 			<BrowserRouter>
 				<Routes>
 					{/* private layout with private route children */}
