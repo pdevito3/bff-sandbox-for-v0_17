@@ -3,6 +3,7 @@ import clsx from "clsx";
 import React, { Fragment } from "react";
 import Avatar from "react-avatar";
 import { useAuthUser } from "@/features/Auth";
+import { ThemeToggle } from "../ThemeToggle";
 
 function PrivateHeader() {
 	const { username, logoutUrl } = useAuthUser();
@@ -13,7 +14,8 @@ function PrivateHeader() {
 				<div className="relative flex items-center justify-between h-16">
 					<div className="absolute inset-y-0 left-0 flex items-center sm:hidden"></div>
 					<div className="flex-1"></div>
-					<div className="absolute inset-y-0 right-0 flex items-center pr-2 space-x-5 sm:static sm:inset-auto sm:ml-6 sm:space-x-2 sm:pr-0">
+					<div className="absolute inset-y-0 right-0 flex items-center pr-2 space-x-5 sm:static sm:inset-auto sm:ml-6 sm:space-x-4 sm:pr-0">
+						<ThemeToggle />
 						{/* <!-- Profile dropdown --> */}
 						<Menu as="div" className="relative ml-3">
 							<div>
