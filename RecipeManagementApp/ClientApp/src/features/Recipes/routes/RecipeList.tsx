@@ -14,9 +14,16 @@ import DebouncedInput from "@/components/Forms/DebouncedInput";
 import queryString from "query-string";
 
 function RecipeList() {
-	const { globalFilter, queryFilter, calculateAndSetQueryFilter } = useGlobalFilter(
-		(value) => `(title|visibility|directions)@=*${value}`,
-	);
+	const {
+		globalFilter: globalRecipeFilter,
+		queryFilter: queryFilterForRecipes,
+		calculateAndSetQueryFilter: calculateAndSetQueryFilterForRecipes,
+	} = useGlobalFilter((value) => `(title|visibility|directions)@=*${value}`);
+	const {
+		globalFilter: globalIngredientFilter,
+		queryFilter: queryFilterForIngredients,
+		calculateAndSetQueryFilter: calculateAndSetQueryFilterForIngredients,
+	} = useGlobalFilter((value) => `(name|measure|quantity)@=*${value}`);
 
 	return (
 		<div className="space-y-6">
@@ -24,14 +31,15 @@ function RecipeList() {
 				<h1>Recipes Table</h1>
 				<div className="py-2">
 					<PaginatedTableProvider>
+						{/* prefer this. more composed approach */}
 						<DebouncedInput
-							value={globalFilter ?? ""}
-							onChange={(value) => calculateAndSetQueryFilter(String(value))}
+							value={globalRecipeFilter ?? ""}
+							onChange={(value) => calculateAndSetQueryFilterForRecipes(String(value))}
 							className="p-2 border rounded-lg shadow font-lg"
 							placeholder="Search all columns..."
 						/>
 						<div className="pt-2">
-							<RecipeListTable queryFilter={queryFilter} />
+							<RecipeListTable queryFilter={queryFilterForRecipes} />
 						</div>
 					</PaginatedTableProvider>
 				</div>
@@ -40,7 +48,15 @@ function RecipeList() {
 				<h1>Ingredients Table</h1>
 				<div className="py-2">
 					<PaginatedTableProvider initialPageSize={1}>
-						<IngredientListTable />
+						<DebouncedInput
+							value={globalIngredientFilter ?? ""}
+							onChange={(value) => calculateAndSetQueryFilterForIngredients(String(value))}
+							className="p-2 border rounded-lg shadow font-lg"
+							placeholder="Search all columns..."
+						/>
+						<div className="pt-2">
+							<IngredientListTable queryFilter={queryFilterForIngredients} />
+						</div>
 					</PaginatedTableProvider>
 				</div>
 			</div>
@@ -49,7 +65,7 @@ function RecipeList() {
 }
 
 interface RecipeListTableProps {
-	queryFilter: string | undefined;
+	queryFilter?: string | undefined;
 }
 
 function RecipeListTable({ queryFilter }: RecipeListTableProps) {
@@ -83,27 +99,28 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 		}),
 	];
 
-	if (isLoading) return <div>Loading...</div>;
 	return (
 		<PaginatedTable
 			data={recipeData}
 			columns={columns}
 			apiPagination={recipePagination}
 			entityPlural="Recipes"
+			isLoading={isLoading}
 		/>
 	);
 }
 
-function IngredientListTable() {
+interface IngredientListTableProps {
+	queryFilter?: string | undefined;
+}
+function IngredientListTable({ queryFilter }: IngredientListTableProps) {
 	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
-	const { globalFilter, queryFilter, calculateAndSetQueryFilter } = useGlobalFilter(
-		(value) => `(name|measure|quantity)@=*${value}`,
-	);
 	const { data: ingredientsResponse, isLoading } = useIngredients({
 		sortOrder: sorting as SortingState,
 		pageSize,
 		pageNumber,
 		filters: queryFilter,
+		hasArtificialDelay: true,
 	});
 	const ingredientsData = ingredientsResponse?.data;
 	const ingredientsPagination = ingredientsResponse?.pagination;
@@ -120,33 +137,22 @@ function IngredientListTable() {
 			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
 			header: () => <span className="px-2 py-1">Quantity</span>,
 		}),
-		columnHelper.accessor((row) => row.measure, {
-			id: "measure",
-			cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
-			header: () => <span className="px-2 py-1">Measure</span>,
-		}),
+		// columnHelper.accessor((row) => row.measure, {
+		// 	id: "measure",
+		// 	cell: (info) => <p className="px-2 py-1">{info.getValue()}</p>,
+		// 	header: () => <span className="px-2 py-1">Measure</span>,
+		// }),
 	];
 
 	return (
 		<>
-			<DebouncedInput
-				value={globalFilter ?? ""}
-				onChange={(value) => calculateAndSetQueryFilter(String(value))}
-				className="p-2 border rounded-lg shadow font-lg"
-				placeholder="Search all columns..."
+			<PaginatedTable
+				data={ingredientsData}
+				columns={columns}
+				apiPagination={ingredientsPagination}
+				entityPlural="Ingredients"
+				isLoading={isLoading}
 			/>
-			<div className="pt-2">
-				{isLoading ? (
-					<div>Loading...</div>
-				) : (
-					<PaginatedTable
-						data={ingredientsData}
-						columns={columns}
-						apiPagination={ingredientsPagination}
-						entityPlural="Ingredients"
-					/>
-				)}
-			</div>
 		</>
 	);
 }
