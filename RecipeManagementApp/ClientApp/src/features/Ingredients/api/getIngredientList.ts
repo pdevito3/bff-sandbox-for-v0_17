@@ -5,6 +5,7 @@ import queryString from 'query-string'
 import { QueryParams, IngredientDto } from '../types';
 import {PagedResponse, Pagination} from '@/types/api';
 import {AxiosResponse} from 'axios';
+import { generateSieveSortOrder } from "@/utils/sorting";
 
 interface delayProps { 
 	hasArtificialDelay?: boolean;
@@ -40,12 +41,8 @@ const [json] = await Promise.all([
 interface ingredientListHookProps extends QueryParams, delayProps {}
 
 export const useIngredients = ({ pageNumber, pageSize, filters, sortOrder, hasArtificialDelay=false, delayInMs=450 }: ingredientListHookProps) => {
-	// TODO abstract to common function for all list calls using this method	
-	const sortOrderString = sortOrder && sortOrder.length > 0 
-		? sortOrder?.map((s) => (s.desc ? `-${s.id}` : s.id)).join(",")
-		: undefined;
-
-		let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrder: sortOrderString });
+	let sortOrderString = generateSieveSortOrder(sortOrder);
+	let queryParams = queryString.stringify({ pageNumber, pageSize, filters, sortOrder: sortOrderString });
 
 	return useQuery(
 		IngredientKeys.list(queryParams ?? ''),
