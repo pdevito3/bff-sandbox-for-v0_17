@@ -119,6 +119,7 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 		pageSize,
 		pageNumber,
 		filters: queryFilter,
+		hasArtificialDelay: true,
 	});
 	const recipeData = recipeResponse?.data;
 	const recipePagination = recipeResponse?.pagination;
@@ -139,6 +140,11 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 			id: "directions",
 			cell: (info) => <p className="">{info.getValue()}</p>,
 			header: () => <span className="">Directions</span>,
+		}),
+		columnHelper.accessor((row) => row.rating, {
+			id: "rating",
+			cell: (info) => <p className="">{info.getValue()}</p>,
+			header: () => <span className="">Rating</span>,
 		}),
 	];
 
