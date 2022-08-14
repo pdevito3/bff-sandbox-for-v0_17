@@ -163,9 +163,7 @@ function PaginatedTable({
 																" inline-flex w-full",
 																header.column.getCanSort() ? " select-none" : "",
 															)}
-															{...{
-																onClick: header.column.getToggleSortingHandler(),
-															}}
+															onClick={header.column.getToggleSortingHandler()}
 														>
 															{flexRender(header.column.columnDef.header, header.getContext())}
 															<span className="w-5 ml-2">

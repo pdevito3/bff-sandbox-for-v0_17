@@ -1,6 +1,6 @@
 import React from "react";
 import { IngredientList } from "./features/Ingredients";
-import { RecipeList } from "./features/Recipes";
+import { RecipeList, NewRecipeForm, RecipeForm } from "./features/Recipes";
 import { Login, useAuthUser } from "./features/Auth";
 import "./custom.css";
 import "react-toastify/dist/ReactToastify.min.css";
@@ -21,7 +21,10 @@ function App() {
 							<Route path="/" element={<Home />} />
 							{/* route marker - remove if you don't want feature routes added by default */}
 							<Route path="/ingredients" element={<IngredientList />} />
-							<Route path="/recipes" element={<RecipeList />} />
+							<Route path="recipes" element={<RecipeList />} />
+							<Route path="recipes/new" element={<NewRecipeForm />} />
+							<Route path="recipes/:recipeId" element={<RecipeForm />} />
+							{/* <Route index element={<LeagueStandings />} /> */}
 						</Route>
 					) : null}
 
