@@ -34,7 +34,7 @@ function RecipeList() {
 				<div className="py-4">
 					{/* prefer this. more composed approach */}
 					<PaginatedTableProvider>
-						{/* TODO: search component? */}
+						{/* TODO: abstract to an input that can use the debounce input under the hood */}
 						<div className="relative mt-1">
 							<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
 								<svg
@@ -72,7 +72,7 @@ function RecipeList() {
 				</h1>
 				<div className="py-4">
 					<PaginatedTableProvider initialPageSize={1}>
-						{/* TODO: search component? */}
+						{/* TODO: abstract to an input that can use the debounce input under the hood */}
 						<div className="relative mt-1">
 							<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
 								<svg
