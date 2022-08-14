@@ -10,11 +10,11 @@ function PrivateLayout() {
 	return (
 		<div className="flex w-full h-full">
 			<PrivateSideNav />
-			<div className="flex-1 h-full">
+			<div className="flex-1 h-screen-minus-private-header">
 				<PrivateHeader />
 				{/* this div covers the bg for main bodies that don't have a full height */}
 				<div className="flex-1 h-full bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-white">
-					<div className="w-full min-h-screen">
+					<div className="w-full h-full">
 						<main className="px-4 py-2 bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-white sm:px-6 md:py-4 md:px-8">
 							{!username ? (
 								<a

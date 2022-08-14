@@ -9,7 +9,7 @@ function PrivateHeader() {
 	const { username, logoutUrl } = useAuthUser();
 
 	return (
-		<nav className="relative w-full bg-white shadow-md dark:bg-gray-800">
+		<nav className="relative w-full bg-white shadow-md h-private-header dark:bg-gray-800">
 			<div className="px-2 mx-auto sm:px-6 lg:px-8">
 				<div className="relative flex items-center justify-between h-16">
 					<div className="absolute inset-y-0 left-0 flex items-center sm:hidden"></div>
