@@ -106,7 +106,7 @@ export default function PrivateSideNav() {
 			</Transition.Root>
 
 			{/* Static sidebar for desktop */}
-			<div className="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+			<div className="z-20 hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
 				{/* Sidebar component, swap this element with another sidebar if you like */}
 				<div className="flex flex-col flex-1 min-h-0 bg-slate-50 dark:bg-slate-800">
 					<div className="flex items-center flex-shrink-0 h-16 px-4 shadow-md bg-slate-100 shadow-violet-500/40 dark:bg-slate-800">
