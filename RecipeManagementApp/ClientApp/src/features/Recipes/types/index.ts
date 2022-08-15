@@ -19,7 +19,7 @@ export type RecipeDto = {
 
 export interface RecipeForManipulationDto {
   id: string;
-  ritle: string;
+  title: string;
   directions: string;
   visibility: string;
   recipeSourceLink: string;

@@ -1,97 +1,92 @@
-import { createColumnHelper, SortingState } from "@tanstack/react-table";
-import React from "react";
-import { useRecipes } from "../api";
-import { RecipeDto } from "../types";
-import { useIngredients } from "@/features/Ingredients/api";
-import { IngredientDto } from "@/features/Ingredients/types";
-import {
-	PaginatedTableProvider,
-	usePaginatedTableContext,
-	PaginatedTable,
-	useGlobalFilter,
-} from "@/components/Forms";
+import React, { MutableRefObject, PropsWithChildren, useLayoutEffect, useRef } from "react";
+import { useTextField } from "react-aria";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
 import { useNavigate } from "react-router-dom";
+import { useAddRecipe } from "../api";
+import { RecipeForCreationDto } from "../types/index";
+import { Notifications } from "@/components/Notifications";
+import { useAutofocus } from "@/hooks/useAutofocus";
 
 function NewRecipeForm() {
 	const navigate = useNavigate();
+	const autofocusRef = useAutofocus();
 	const {
-		globalFilter: globalRecipeFilter,
-		queryFilter: queryFilterForRecipes,
-		calculateAndSetQueryFilter: calculateAndSetQueryFilterForRecipes,
-	} = useGlobalFilter((value) => `(title|visibility|directions)@=*${value}`);
+		register,
+		handleSubmit,
+		watch,
+		reset,
+		control,
+		formState: { errors },
+	} = useForm<RecipeForCreationDto>({
+		defaultValues: {
+			visibility: "public",
+		},
+	});
+
+	const createRecipeApi = useAddRecipe();
+	const onSubmit: SubmitHandler<RecipeForCreationDto> = (data) => createRecipe(data);
+	function createRecipe(data: RecipeForCreationDto) {
+		createRecipeApi
+			.mutateAsync(data)
+			.then(() => {
+				Notifications.success("Recipe created successfully");
+			})
+			.then(() => {
+				reset();
+			})
+			.catch((e) => {
+				Notifications.error("There was an error creating the recipe");
+				console.error(e);
+			});
+	}
 
 	return (
 		<div className="space-y-6">
-			<button className="px-3 py-2 border border-white rounded-md" onClick={() => navigate(-1)}>
+			<button
+				className="px-3 py-2 border rounded-md border-slate-700 dark:border-white"
+				onClick={() => navigate(-1)}
+			>
 				Back
 			</button>
 			<div className="">
 				<h1 className="max-w-4xl text-2xl font-medium tracking-tight font-display text-slate-900 dark:text-gray-50 sm:text-4xl">
-					Recipes Table
+					Add a Recipe
 				</h1>
-				<div className="py-4">
-					{/* prefer this. more composed approach */}
-					<PaginatedTableProvider>
-						<div className="pt-2">
-							<RecipeListTable queryFilter={queryFilterForRecipes} />
-						</div>
-					</PaginatedTableProvider>
-				</div>
+				<form className="py-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+					<input
+						{...register("title")}
+						className="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+						placeholder="Title..."
+						ref={autofocusRef}
+					/>
+					<input
+						{...register("visibility")}
+						className="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+						placeholder="Visible..."
+					/>
+					<input
+						{...register("directions")}
+						className="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+						placeholder="Directions..."
+					/>
+					<input
+						{...register("rating")}
+						className="block p-2 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+						placeholder="Rating..."
+					/>
+
+					<div className="">
+						<input
+							type="submit"
+							className="px-3 py-2 text-white border rounded-md shadow cursor-pointer border-slate-violet-800 bg-violet-500 dark:border-violet-500 dark:bg-transparent dark:shadow-violet-500"
+							value="Submit"
+						/>
+					</div>
+				</form>
+				<DevTool control={control} placement={"bottom-right"} />
 			</div>
 		</div>
-	);
-}
-
-interface RecipeListTableProps {
-	queryFilter?: string | undefined;
-}
-
-function RecipeListTable({ queryFilter }: RecipeListTableProps) {
-	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
-
-	const { data: recipeResponse, isLoading } = useRecipes({
-		sortOrder: sorting as SortingState,
-		pageSize,
-		pageNumber,
-		filters: queryFilter,
-		hasArtificialDelay: true,
-	});
-	const recipeData = recipeResponse?.data;
-	const recipePagination = recipeResponse?.pagination;
-
-	const columnHelper = createColumnHelper<RecipeDto>();
-	const columns = [
-		columnHelper.accessor((row) => row.title, {
-			id: "title",
-			cell: (info) => <p className="">{info.getValue()}</p>,
-			header: () => <span className="">Title</span>,
-		}),
-		columnHelper.accessor((row) => row.visibility, {
-			id: "visibility",
-			cell: (info) => <p className="">{info.getValue()}</p>,
-			header: () => <span className="">Visibility</span>,
-		}),
-		columnHelper.accessor((row) => row.directions, {
-			id: "directions",
-			cell: (info) => <p className="">{info.getValue()}</p>,
-			header: () => <span className="">Directions</span>,
-		}),
-		columnHelper.accessor((row) => row.rating, {
-			id: "rating",
-			cell: (info) => <p className="">{info.getValue()}</p>,
-			header: () => <span className="">Rating</span>,
-		}),
-	];
-
-	return (
-		<PaginatedTable
-			data={recipeData}
-			columns={columns}
-			apiPagination={recipePagination}
-			entityPlural="Recipes"
-			isLoading={isLoading}
-			onRowClick={(row) => alert(row.id)}
-		/>
 	);
 }
 
