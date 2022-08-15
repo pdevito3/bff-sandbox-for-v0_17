@@ -1,6 +1,6 @@
 import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import React from "react";
-import { useRecipes } from "../api";
+import { useDeleteRecipe, useRecipes } from "../api";
 import { RecipeDto } from "../types";
 import { useIngredients } from "@/features/Ingredients/api";
 import { IngredientDto } from "@/features/Ingredients/types";
@@ -12,6 +12,7 @@ import {
 } from "@/components/Forms";
 import DebouncedInput from "@/components/Forms/DebouncedInput";
 import { useNavigate } from "react-router-dom";
+import { Notifications } from "@/components/Notifications";
 
 function RecipeList() {
 	const navigate = useNavigate();
@@ -125,6 +126,21 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 	const navigate = useNavigate();
 	const { sorting, pageSize, pageNumber } = usePaginatedTableContext();
 
+	const deleteRecipeApi = useDeleteRecipe();
+	function deleteRecipe(id: string) {
+		// TODO are you sure modal
+
+		deleteRecipeApi
+			.mutateAsync(id)
+			.then(() => {
+				Notifications.success("Recipe deleted successfully");
+			})
+			.catch((e) => {
+				Notifications.error("There was an error deleting the recipe");
+				console.error(e);
+			});
+	}
+
 	const { data: recipeResponse, isLoading } = useRecipes({
 		sortOrder: sorting as SortingState,
 		pageSize,
@@ -156,6 +172,23 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 			id: "rating",
 			cell: (info) => <p className="">{info.getValue()}</p>,
 			header: () => <span className="">Rating</span>,
+		}),
+		columnHelper.accessor("id", {
+			cell: (row) => (
+				<div className="flex items-center justify-center w-full">
+					<button
+						onClick={(e) => {
+							deleteRecipe(row.getValue());
+							e.stopPropagation();
+						}}
+						className="inline-flex items-center px-1 py-2 text-sm font-medium leading-5 text-gray-700 transition duration-100 ease-in bg-white border border-gray-300 rounded-full shadow-sm hover:bg-red-200 hover:text-red-800 hover:outline-none dark:border-slate-900 dark:bg-slate-800 dark:text-white dark:hover:bg-red-800 dark:hover:text-red-200 dark:hover:outline-none sm:px-3 sm:py-1 sm:opacity-0 sm:group-hover:opacity-100"
+					>
+						🗑
+						{/* <BsTrashFill className="w-4 h-4" /> */}
+					</button>
+				</div>
+			),
+			header: () => <span className=""></span>,
 		}),
 	];
 

@@ -189,7 +189,7 @@ function PaginatedTable({
 										<tr
 											key={row.id}
 											className={clsx(
-												"border-b bg-white  dark:border-gray-700 dark:bg-gray-800 ",
+												"group border-b bg-white dark:border-gray-700 dark:bg-gray-800",
 												rowIsClickable
 													? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
 													: "",
