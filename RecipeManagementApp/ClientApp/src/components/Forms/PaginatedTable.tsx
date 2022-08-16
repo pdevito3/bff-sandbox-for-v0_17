@@ -174,7 +174,9 @@ function PaginatedTable({
 																	}[header.column.getIsSorted() as string] ?? null}
 																</span>
 																<span className="flex-none invisible rounded opacity-50 group-hover:visible">
-																	{header.column.getIsSorted() ? null : "🔼"}
+																	{header.column.getIsSorted() || !header.column.getCanSort()
+																		? null
+																		: "🔼"}
 																</span>
 															</span>
 														</div>

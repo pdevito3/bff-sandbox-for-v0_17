@@ -174,6 +174,7 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 			header: () => <span className="">Rating</span>,
 		}),
 		columnHelper.accessor("id", {
+			enableSorting: false,
 			cell: (row) => (
 				<div className="flex items-center justify-center w-full">
 					<button
