@@ -155,7 +155,7 @@ function PaginatedTable({
 												<th
 													key={header.id}
 													colSpan={header.colSpan}
-													className="px-6 py-3 cursor-pointer group"
+													className={`group cursor-pointer px-6 py-3 ${header.column.columnDef.meta?.thClassName}`}
 												>
 													{header.isPlaceholder ? null : (
 														<div

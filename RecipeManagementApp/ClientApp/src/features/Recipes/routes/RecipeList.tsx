@@ -13,6 +13,7 @@ import {
 import DebouncedInput from "@/components/Forms/DebouncedInput";
 import { useNavigate } from "react-router-dom";
 import { Notifications } from "@/components/Notifications";
+import "@tanstack/react-table";
 
 function RecipeList() {
 	const navigate = useNavigate();
@@ -175,6 +176,7 @@ function RecipeListTable({ queryFilter }: RecipeListTableProps) {
 		}),
 		columnHelper.accessor("id", {
 			enableSorting: false,
+			meta: { thClassName: "w-10" },
 			cell: (row) => (
 				<div className="flex items-center justify-center w-full">
 					<button
