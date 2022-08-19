@@ -1,4 +1,4 @@
-import reactRefresh from '@vitejs/plugin-react-refresh';
+import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { defineConfig } from 'vite';
@@ -16,6 +16,10 @@ const keyFilePath = join(baseFolder, `${certificateName}.key`);
 const path = require('path');
 const { env } = require('process');
 
+console.log(`env.ASPNETCORE_HTTPS_PORT: ${env.ASPNETCORE_HTTPS_PORT}`);
+console.log(`env.ASPNETCORE_ENVIRONMENT: ${env.ASPNETCORE_ENVIRONMENT}`);
+console.log(`env.ASPNETCORE_URLS: ${env.ASPNETCORE_URLS}`);
+
 const target = env.ASPNETCORE_HTTPS_PORT
 	? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}`
 	: env.ASPNETCORE_URLS
@@ -29,7 +33,7 @@ const baseProxy = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [reactRefresh()],
+    plugins: [react()],
 	resolve: {
         alias: {
             '@': path.resolve(__dirname, '/src'),
